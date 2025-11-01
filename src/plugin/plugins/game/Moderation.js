@@ -43,22 +43,22 @@ export default class Moderation extends GamePlugin {
         let recipientRank = await this.getRecipientRank(recipient, args.id)
 
         if (recipientRank < user.rank) {
-            await this.applyBan(user, args.id)
-
+            await this.applyBan(user.id, args.id)
+			
             recipient.close()
         }
     }
 
-    async applyBan(moderator, id, hours = 24, message = '') {
+    async applyBan(moderator, id, hours = 24, message = 'In-game Menu') {
         let expires = Date.now() + (hours * 60 * 60 * 1000)
-
+			
         let banCount = await this.db.getBanCount(id)
         // 5th ban is a permanent ban
         if (banCount >= 4) {
             this.db.users.update({ permaBan: true }, { where: { id: id }})
         }
 
-        this.db.bans.create({ userId: id, expires: expires, moderatorId: moderator.data.id, message: message })
+        this.db.bans.create({ userId: id, expires: expires, moderatorId: moderator, message: message })
     }
 
     async getRecipientRank(recipient, id) {
