@@ -1,9 +1,3 @@
-# Yukon Server
-
-Visit the Discord server for more support.
-
-[![Yukon Discord members](https://badgen.net/discord/members/NtYtpzyxBu)](https://discord.gg/NtYtpzyxBu)
-
 ## Built With
 
 * [Node.js](https://nodejs.org/en/)
@@ -160,4 +154,4 @@ npm run start
 
 ## Disclaimer
 
-This project is a work in progress, please report any issues you find [here](https://github.com/wizguin/yukon-server/issues).
+This project is a fork of wizguin/yukon-server and is a work in progress, no support will be provided.
