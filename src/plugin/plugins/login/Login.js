@@ -31,7 +31,7 @@ export default class Login extends Plugin {
             },
             permaBan: {
                 success: false,
-                message: 'Banned:\nYou are banned forever'
+                message: 'Banned\nYou are banned forever'
             }
         }
     }
@@ -174,10 +174,24 @@ export default class Login extends Plugin {
             return
         }
 
-        let hours = Math.round((user.ban.expires - Date.now()) / 60 / 60 / 1000)
+		let banmessage
+		var diff = user.ban.expires.getTime() - Date.now()
+		var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+		var end = days + " day(s) " + hours + " hour(s) " + minutes +  " minute(s) " + seconds + " second(s) ";
+
+		
+		if (user.ban.message != null){
+			banmessage = "\nYou are Banned! \n\n Time Left: \n" + end + "\n\nReason:\n\n " + user.ban.message
+		}else {
+			banmessage = "\nYou are Banned! \n\n Time Left: \n\n" + end
+		}
+		
         return {
             success: false,
-            message: `Banned:\nYou are banned for the next ${hours} hours`
+            message: `${banmessage}`
         }
     }
 
