@@ -196,13 +196,23 @@ export default class GameUser extends User {
                         },
                         required: false
                     },
+					{
+                        model: this.db.mutes,
+                        as: 'mute',
+                        where: {
+                            expires: {
+                                [Op.gt]: Date.now()
+                            }
+                        },
+                        required: false
+                    },
                     {
                         model: this.db.buddies,
                         as: 'buddies',
                         include: {
                             model: this.db.users,
                             as: 'user',
-                            attributes: ['username']
+                            attributes: ['username', 'username_verified', 'id']
                         },
                         separate: true
                     },
@@ -212,7 +222,7 @@ export default class GameUser extends User {
                         include: {
                             model: this.db.users,
                             as: 'user',
-                            attributes: ['username']
+                            attributes: ['username', 'username_verified', 'id']
                         },
                         separate: true
                     },
@@ -244,7 +254,7 @@ export default class GameUser extends User {
                         include: {
                             model: this.db.users,
                             as: 'user',
-                            attributes: ['username']
+                            attributes: ['username', 'username_verified', 'id']
                         },
                         separate: true
                     },
@@ -261,7 +271,7 @@ export default class GameUser extends User {
             }
 
             Object.assign(this, user.get({ plain: true }))
-
+			
             this.buddies = new BuddyCollection(this, user.buddies)
             this.ignores = new IgnoreCollection(this, user.ignores)
             this.inventory = new InventoryCollection(this, user.inventory)
@@ -286,6 +296,7 @@ export default class GameUser extends User {
         return pick(this,
             'id',
             'username',
+            'displayName',
             'joinTime',
             'head',
             'face',

@@ -32,6 +32,14 @@ export default class Item extends GamePlugin {
             user.stopWalkingPet()
         }
 
+        if (item.staff && user.rank < 2){
+            return
+        }
+
+        if (item.mascot && user.rank != 10){
+            return
+        }
+
         user.setItem(slot, args.item)
     }
 
@@ -53,7 +61,18 @@ export default class Item extends GamePlugin {
             user.addSystemMail(agentPostcard)
         }
 
-        user.updateCoins(-item.cost)
+        if (item.staff && user.rank < 2){
+            return
+        }
+
+        if (item.mascot && user.rank != 10){
+            return
+        }
+
+        if (user.rank != 20){
+            user.updateCoins(-item.cost)
+        }
+
         user.send('add_item', { item: args.item, name: item.name, slot: slot, coins: user.coins })
     }
 

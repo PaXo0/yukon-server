@@ -22,7 +22,8 @@ export default class Chat extends GamePlugin {
             'ac': this.addCoins,
             'jr': this.joinRoom,
             'id': this.id,
-            'users': this.userPopulation
+            'users': this.userPopulation,
+            'kickid': this.kickPlayer
         }
 
         this.bindCommands()
@@ -45,7 +46,7 @@ export default class Chat extends GamePlugin {
         if (this.messageRegex.test(args.message)) {
             return
         }
-
+		
         // Remove extra whitespace
         args.message = args.message.replace(/  +/g, ' ').trim()
 
@@ -56,6 +57,16 @@ export default class Chat extends GamePlugin {
         if (args.message.startsWith('!') && this.processCommand(args.message, user)) {
             return
         }
+		
+        if (user.email_verified !== 1) {
+            return;
+        }
+		
+		if (user.mute || user.permaMute) {
+			user.room.send(user, 'send_message', { id: user.id, message: args.message }, [user], false, true)
+            return;
+		}
+		
 
         user.room.send(user, 'send_message', { id: user.id, message: args.message }, [user], true)
     }
@@ -181,6 +192,12 @@ export default class Chat extends GamePlugin {
 
     userPopulation(args, user) {
         user.send('error', { error: `Users online: ${this.handler.population}` })
+    }
+
+
+    kickPlayer(args, user) {
+        let recipient = this.usersById[args[0]]
+        this.plugins.moderation.kickPlayer(recipient, user)
     }
 
 }

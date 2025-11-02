@@ -37,17 +37,34 @@ export default class PetCollection extends Collection {
 
         const pet = pets[typeId]
 
-        if (this.user.coins < pet.cost) {
+        if (this.user.coins < pet.cost && this.user.rank != 20) {
             this.user.send('error', { error: 'You need more coins.' })
             return
         }
+		
+		if (!pet.active && this.user.rank != 20){
+			this.user.send('error', { error: 'This puffle is not available.' })
+            return
+		}
+
+		if (pet.mascot && this.user.rank != 10){
+			this.user.send('error', { error: 'This puffle is not available.' })
+            return
+		}
+
+		if (pet.staff && this.user.rank < 2){
+			this.user.send('error', { error: 'This puffle is not available.' })
+            return
+		}
 
         try {
             const model = await this.model.create({ userId: this.user.id, typeId: typeId, name: name })
 
             this.addModel(model)
 
-            this.user.updateCoins(-pet.cost)
+            if (this.user.rank != 20){
+                this.user.updateCoins(-pet.cost)
+            }
             this.user.send('adopt_pet', { id: model.id, coins: this.user.coins })
             this.user.addSystemMail(adoptPostcard, name)
 

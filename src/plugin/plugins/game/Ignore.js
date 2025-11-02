@@ -53,6 +53,11 @@ export default class Ignore extends GamePlugin {
         user.clearBuddyRequest(args.id)
 
         user.ignores.add(args.id)
+
+        let isUsernameFiltered = await this.db.isUsernameApproved(username)
+        if (isUsernameFiltered == null) { // sender of the friend request is filtered
+            username = `P${args.id}`
+        }
         user.send('ignore_add', { id: args.id, username: username })
     }
 

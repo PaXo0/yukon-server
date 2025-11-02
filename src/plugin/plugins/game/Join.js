@@ -30,7 +30,8 @@ export default class Join extends GamePlugin {
             igloos: user.igloos,
             furniture: user.furniture,
             postcards: user.postcards,
-            pets: user.pets
+            pets: user.pets,
+			username_verified: user.username_verified,
         })
 
         // Update token on database now that user has fully connected
@@ -43,7 +44,12 @@ export default class Join extends GamePlugin {
         }
 
         let spawn = this.getSpawn()
-        user.joinRoom(spawn)
+		
+		if (user.rank === 10) {
+			this.joinIgloo({ igloo: user.id, x: 0, y: 0 }, user);
+		} else {
+			user.joinRoom(spawn)
+		}
 
         user.joinedServer = true
 
@@ -51,6 +57,7 @@ export default class Join extends GamePlugin {
     }
 
     joinRoom(args, user) {
+		
         if (!isNumber(args.room)) {
             return
         }

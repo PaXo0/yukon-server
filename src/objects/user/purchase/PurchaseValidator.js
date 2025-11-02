@@ -23,6 +23,10 @@ export default class PurchaseValidator {
         return this.validate(id, 'furnitures')
     }
 
+    pet(id) {
+        return this.validate(id, 'pets')
+    }
+
     flooring(id) {
         return this.validate(id, 'floorings', [this.user.room.flooring])
     }
@@ -39,16 +43,27 @@ export default class PurchaseValidator {
         if (!item) {
             return false
 
-        } else if (item.cost > this.user.coins) {
-            this.user.send('error', { error: 'You need more coins.' })
-            return false
-
         } else if (includes.includes(id)) {
             this.user.send('error', { error: 'You already have this item.' })
             return false
 
-        } else if (item.patched) {
+        } else if (this.user.rank == 20) {
+            return item
+
+        }else if (!item.active) {
             this.user.send('error', { error: 'This item is not currently available.' })
+            return false
+
+        } else if (item.mascot && this.user.rank != 10) {
+            this.user.send('error', { error: 'This item is not available.' })
+            return false
+
+        } else if (item.staff && this.user.rank < 2) {
+            this.user.send('error', { error: 'This item is a staff item.' })
+            return false
+
+        } else if (item.cost > this.user.coins) {
+            this.user.send('error', { error: 'You need more coins.' })
             return false
 
         } else {

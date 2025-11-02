@@ -83,7 +83,7 @@ export default class CardInstance extends BaseInstance {
     start() {
         let users = this.users.map(user => {
             return {
-                username: user.username,
+                username: user.displayName,
                 color: user.color,
                 ninjaRank: user.ninjaRank
             }

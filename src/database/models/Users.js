@@ -38,6 +38,11 @@ export default class Users extends BaseModel {
                     allowNull: false,
                     defaultValue: 0
                 },
+				permaMute: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: false,
+                    defaultValue: 0
+                },
                 joinTime: {
                     type: Sequelize.DATE,
                     allowNull: false,
@@ -102,7 +107,22 @@ export default class Users extends BaseModel {
                     type: DataTypes.INTEGER(3),
                     allowNull: false,
                     defaultValue: 0
-                }
+                },
+				username_verified: {
+                    type: DataTypes.INTEGER(1),
+                    allowNull: false,
+                    defaultValue: 0
+                },
+				username_rejected: {
+                    type: DataTypes.INTEGER(1),
+                    allowNull: false,
+                    defaultValue: 0
+                },
+				email_verified: {
+                    type: DataTypes.INTEGER(1),
+                    allowNull: false,
+                    defaultValue: 0
+                },
             },
             { sequelize, timestamps: false, tableName: 'users' }
         )
@@ -116,6 +136,10 @@ export default class Users extends BaseModel {
         this.hasOne(db.bans, {
             foreignKey: 'userId',
             as: 'ban'
+        })
+		this.hasOne(db.mutes, {
+            foreignKey: 'userId',
+            as: 'mute'
         })
         this.hasMany(db.buddies, {
             foreignKey: 'userId',
@@ -161,6 +185,7 @@ export default class Users extends BaseModel {
         return pick(this,
             'id',
             'username',
+            'displayName',
             'head',
             'face',
             'neck',
@@ -170,7 +195,16 @@ export default class Users extends BaseModel {
             'color',
             'photo',
             'flag',
+            'username_verified',
+            'username_rejected',
+            'email_verified',
         )
     }
+
+
+  get displayName() {
+    if (this.username_verified) return this.username;
+    return `P${this.id}`;
+  }
 
 }

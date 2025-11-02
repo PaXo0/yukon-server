@@ -12,9 +12,9 @@ export default class OpenIgloos {
         return this.flat.includes(igloo)
     }
 
-    add(user) {
+    add(user, igloo=null) {
         if (!this.includes(user.id)) {
-            this.list.push({ id: user.id, username: user.username })
+            this.list.push({ id: user.id, username: user.displayName, igloo: igloo })
         }
     }
 

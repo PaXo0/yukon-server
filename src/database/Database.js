@@ -87,7 +87,7 @@ export default class Database {
             raw: true
 
         }, null, (result) => {
-            return result.username
+            return result.username, result.username_verified
         })
     }
 
@@ -97,6 +97,12 @@ export default class Database {
         })
     }
 
+    async getMuteCount(userId) {
+        return await this.mutes.count({
+            where: { userId: userId }
+        })
+    }
+	
     async getIgloo(userId) {
         return await this.findOne('igloos', {
             where: { userId: userId },
@@ -127,6 +133,35 @@ export default class Database {
 
     async getWorldPopulations() {
         return await this.getCrumb('worlds')
+    }
+
+    async getUnverifedUsers(userId) {
+        return await Users.findAll({
+            where: {
+                username_verified: "0",
+                username_rejected: "0",
+            },
+        })
+    }
+
+    async verifyUser(userID) {
+        return await this['users'].update({username_verified: 1, username_rejected: 0}, {where: {id: userID} } )
+    }
+
+    async rejectUser(userID) {
+        return await this['users'].update({username_rejected: 1, username_verified: 0}, {where: {id: userID} } )
+    }
+
+    async isUsernameApproved(username) {
+        return await this.findOne('users', {
+            where: {username: username, username_verified: 1, username_rejected: 0}
+        })
+    }
+
+    async isIDApproved(id) {
+        return await this.findOne('users', {
+            where: {id: id, username_verified: 1}
+        })
     }
 
     async getIgnored(userId, ignoreId) {

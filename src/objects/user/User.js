@@ -68,6 +68,16 @@ export default class User {
                             }
                         },
                         required: false
+                    },
+					{
+                        model: this.db.mutes,
+                        as: 'mute',
+                        where: {
+                            expires: {
+                                [Op.gt]: Date.now()
+                            }
+                        },
+                        required: false
                     }
                 ]
             })
@@ -107,6 +117,7 @@ export default class User {
         return pick(this,
             'id',
             'username',
+            'displayName',
             'head',
             'face',
             'neck',
@@ -116,7 +127,15 @@ export default class User {
             'color',
             'photo',
             'flag',
+            'username_verified',
+            'username_rejected',
+            'email_verified',
         )
     }
+
+  get displayName() {
+    if (this.username_verified) return this.username;
+    return `P${this.id}`;
+  }
 
 }

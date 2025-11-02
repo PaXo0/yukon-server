@@ -48,12 +48,21 @@ export default class Room {
      * @param {object} args - Packet arguments
      * @param {Array} filter - Users to exclude
      * @param {boolean} checkIgnore - Whether or not to exclude users who have user added to their ignore list
+     * @param {boolean} modonly - Whether or not to exclude users who are not moderator
      */
-    send(user, action, args = {}, filter = [user], checkIgnore = false) {
+    send(user, action, args = {}, filter = [user], checkIgnore = false, modonly = false) {
         let users = this.userValues.filter(u => !filter.includes(u))
+		
 
         for (let u of users) {
-            if (checkIgnore && u.ignores.includes(user.id)) {
+
+            //u.send('error', { error: `modonly: ${modonly} urank: ${u.rank}` })
+
+            if (modonly && u.rank < 2){
+                continue
+            }
+			
+            if (checkIgnore && u.ignores.includes(user.id) && !modonly) {
                 continue
             }
 
